@@ -59,14 +59,13 @@ def dtd_file_name(doc):
         return "ds{}.dtd".format(doc.getroot().attrib.get('verze_ds').replace('.', ''))
 
 
-def dtd_source(file_name, dir_name, dir_url, verbose):
+def dtd_source(file_name, dir_name, dir_url):
     """
     Returns DTD content as file-like object.
 
     :param file_name:   DTD file name
     :param dir_name:    directory in local filesystem to search for DTD file
     :param dir_url:     URL base to download DTD file
-    :param verbose:     be more verbose
     :return:            DTD as file-like object
     """
     if os.path.isfile(file_name):
