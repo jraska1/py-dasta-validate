@@ -37,7 +37,11 @@ def main(xsd_dir, src):
     schema = etree.XMLSchema(etree.XML(etree.tostring(schema_def)))
     verbose(etree.tostring(schema_def, pretty_print=True).decode(), 2)
 
-    res = schema.validate(doc)
+    if click.get_current_context().obj and click.get_current_context().obj.get('verbose', 0) >= 3:
+        schema.assertValid(doc)
+        res = True
+    else:
+        res = schema.validate(doc)
     verbose("document is valid" if res else "document is not valid")
     sys.exit(0 if res else -1)
 
