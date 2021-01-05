@@ -35,15 +35,16 @@ def main(xsd_dir, src):
 
     schema_def = pick_out_schema(doc, xsd_dir)
     schema = etree.XMLSchema(etree.XML(etree.tostring(schema_def)))
-    verbose(etree.tostring(schema_def, pretty_print=True).decode(), 2)
+    verbose(etree.tostring(schema_def, pretty_print=True).decode(), 3)
 
-    if click.get_current_context().obj and click.get_current_context().obj.get('verbose', 0) >= 3:
+    try:
         schema.assertValid(doc)
-        res = True
+    except etree.DocumentInvalid as e:
+        verbose("document is not valid, error detail: '{0}'".format(e))
+        sys.exit(-1)
     else:
-        res = schema.validate(doc)
-    verbose("document is valid" if res else "document is not valid")
-    sys.exit(0 if res else -1)
+        verbose("document is valid")
+    sys.exit(0)
 
 
 def pick_out_schema(doc, xsd_dir):
@@ -70,7 +71,7 @@ def pick_out_schema(doc, xsd_dir):
             file_name = os.path.join(xsd_dir, uri.split('/')[-1])
             if os.path.isfile(file_name):
                 uri = file_name
-            verbose(f"XML schema involved: ns={ns}, uri={uri}")
+            verbose(f"XML schema involved: ns={ns}, uri={uri}", 2)
             etree.SubElement(schema_def, "import", attrib={
                 "namespace": ns,
                 "schemaLocation": uri
