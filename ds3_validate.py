@@ -5,9 +5,11 @@ import requests
 import sys
 from lxml import etree
 from io import BytesIO
+from bs4 import BeautifulSoup
 
-DTD_DIR = './dtd'
+DTD_DIR = '.'
 DTD_URL = 'http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/'
+VERSION_DTD_MAPPING_URL = "http://ciselniky.dasta.mzcr.cz/CD_DS3/hypertext/WWBLJ.htm"
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
@@ -38,8 +40,13 @@ def main(dtd_file, dtd_dir, dtd_url, src):
         verbose(f"validation against file {dtd_file.name}")
         dtd = etree.DTD(dtd_file)
     else:
-        with dtd_source(dtd_file_name(doc), dtd_dir, dtd_url, verbose) as f:
-            dtd = etree.DTD(f)
+        dtd_name = dtd_file_name(doc)
+        if dtd_name:
+            with dtd_source(dtd_name, dtd_dir, dtd_url) as f:
+                dtd = etree.DTD(f)
+        else:
+            verbose("cannot find out DTD file name, validations is not possible")
+            sys.exit(-1)
 
     res = dtd.validate(doc)
     verbose("document is valid" if res else "document is not valid")
@@ -56,7 +63,10 @@ def dtd_file_name(doc):
     if doc.docinfo.system_url:
         return os.path.basename(doc.docinfo.system_url)
     else:
-        return "ds{}.dtd".format(doc.getroot().attrib.get('verze_ds').replace('.', ''))
+        version = doc.getroot().attrib.get('verze_ds')
+        file_name = suck_dtd_file_name(version)
+        verbose(f"document version: {version}, dtd file name: {file_name}", 2)
+        return file_name
 
 
 def dtd_source(file_name, dir_name, dir_url):
@@ -68,11 +78,6 @@ def dtd_source(file_name, dir_name, dir_url):
     :param dir_url:     URL base to download DTD file
     :return:            DTD as file-like object
     """
-    if os.path.isfile(file_name):
-        verbose(f"validation against file {file_name}")
-        return open(file_name, 'rb')
-
-    file_name = os.path.basename(file_name)
     file_path = os.path.join(dir_name, file_name)
     if os.path.isfile(file_path):
         verbose(f"validation against file {file_path}")
@@ -86,6 +91,24 @@ def dtd_source(file_name, dir_name, dir_url):
     else:
         verbose(f"validation against empty DTD")
         return BytesIO(b"")
+
+
+def suck_dtd_file_name(version):
+    """
+    Sucks DTD file name from standard web page based on version number.
+
+    @param version:  version number
+    @return:         DTD file name
+    """
+    if version.startswith('0'):
+        version = version[1:]
+    req = requests.get(VERSION_DTD_MAPPING_URL)
+    if req:
+        soup = BeautifulSoup(req.content, 'html.parser')
+        for row in soup.table.find_all("tr"):
+            if row.span.text == version:
+                return "ds0{}.dtd".format(row.find_all("span")[-1].text.split()[0].replace('.', ''))
+    return None
 
 
 def verbose(message, level=1):

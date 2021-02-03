@@ -1,0 +1,334 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Blog post on root.cz</title>
+	<meta name="generator" content="LibreOffice 7.0.4.2 (Linux)"/>
+	<meta name="created" content="2021-02-03T11:46:45.203152580"/>
+	<meta name="changed" content="2021-02-03T17:37:30.567309556"/>
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin-left: 0.79in; margin-right: 0.39in; margin-top: 0.39in; margin-bottom: 0.39in }
+		p { margin-bottom: 0.1in; line-height: 115%; background: transparent }
+		h1 { margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
+		h1.cjk { font-family: "Noto Sans CJK SC"; font-size: 18pt; font-weight: bold }
+		h1.ctl { font-family: "Lohit Devanagari"; font-size: 18pt; font-weight: bold }
+		pre { background: transparent }
+		pre.western { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		pre.cjk { font-family: "Noto Sans Mono CJK SC", monospace; font-size: 10pt }
+		pre.ctl { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
+		h2.cjk { font-family: "Noto Sans CJK SC"; font-size: 16pt; font-weight: bold }
+		h2.ctl { font-family: "Lohit Devanagari"; font-size: 16pt; font-weight: bold }
+		a:link { color: #000080; so-language: zxx; text-decoration: underline }
+		a:visited { color: #800000; so-language: zxx; text-decoration: underline }
+	</style>
+</head>
+<body lang="cs-CZ" link="#000080" vlink="#800000" dir="ltr"><p>Vzhledem
+k mé pracovní náplni se opakovaně setkávám se zprávami ve
+formátu <a href="https://dastacr.cz/">DASTA</a>, a to od různých
+výrobců informačních systémů ve zdravotnictví. 
+</p>
+<p>Jedná se o XML zprávy, které mají standardizovaný obsah a
+strukturu. Postupem času vzniklo více verzí tohoto národního
+standardu, nicméně v posledních letech se setkávám se zprávami
+v DASTA ver.3 (tahle větev se již nerozvíjí) a DASTA ver.4.</p>
+<p>Struktura zpráv ve formátu DASTA ver.3 se řídí dle DTD
+specifikovaného tímto standardem. Na rozdíl od předchozí pak
+DASTA ver.4 svou strukturu definuje pomocí několika provázaných
+XML Schema.</p>
+<p><br/>
+<br/>
+
+</p>
+<p>Dříve, než se začnu zabývat obsahem nějaké zprávy, obvykle
+dělám její validaci. Chci se tím vyhnout problémům při
+zdlouhavém vyjasňování, proč něco nefunguje a kdo za to může.
+Pokud je zpráva validní, pak případné problémy musím hledat na
+své straně. V opačném případě by se měl zamyslet také
+původce zprávy.</p>
+<p><br/>
+<br/>
+
+</p>
+<p>Nezřídka narazím na to, že zpráva není validní. Pokud tuto
+skutečnost reklamuji u původce zprávy, pak častá reakce je něco
+ve smyslu: <i>„A jak jste pane Raška přišel na to, že je zpráva
+nevalidní? Nám připadá validní dost.“</i></p>
+<p><br/>
+<br/>
+
+</p>
+<p><span lang="cs-CZ">Protože nechci pouze verbálně proklamovat,
+nabízím své skripty, které jsem si postupem času vytvořil na
+zjednodušení validace DASTA zpráv. Najdete je v projektu na
+GitHub:  </span><a href="https://github.com/jraska1/py-dasta-validate"><span lang="cs-CZ">py-dasta-validate</span></a></p>
+<p><br/>
+<br/>
+
+</p>
+<h1 class="western">Obecné informace k postupu validace</h1>
+<p>Vzhledem k výrazně odlišnému způsobu definování struktury
+XML zpráv jsem vytvořil dva samostatné skripty, a to:</p>
+<ul>
+	<li><p><b>ds3_validate.py</b>	- skript pro validaci DASTA ver. 3 dle
+	DTD</p>
+	<li><p><b>ds3_validate.py</b>	- skript pro validaci DASTA ver.4 dle
+	XML Schema</p>
+</ul>
+<p><br/>
+<br/>
+
+</p>
+<p>Základní postup vyhodnocení je v obou skriptech stejný. 
+</p>
+<p>V prvním kroku se provede parsování XML zprávy do vnitřní
+reprezentace. Ověří se tím, že se jedná o správně formátovaný
+XML dokument. Ve druhém kroku se pokusím najít zdroj DTD nebo XML
+Schema, proti kterému budu ve třetím kroku validovat. V tomto
+kroku se postup obou skriptů výrazně odlišuje. Posledním krokem
+je pak provedení vlastní validace.</p>
+<p><br/>
+<br/>
+
+</p>
+<h1 class="western">Validace DASTA ver.3 zpráv</h1>
+<p>Asi nejjednodušší způsob seznámení je podívat se na volby,
+které skript podporuje:</p>
+<p><br/>
+<br/>
+
+</p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds3_validate.py -h
+Usage: ds3_validate.py [OPTIONS] SRC
+
+  Validates DASTA ver.3 document against appropriate DTD.
+
+Options:
+  --dtd FILENAME  DTD file to validate against
+  --dtd-dir TEXT  Local file system directory, where can be DTD found
+                  [default: .]
+
+  --dtd-url TEXT  Web URL base, where can be DTD found  [default:
+                  http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/]
+
+  -v, --verbose   To be more verbose
+  -h, --help      Show this message and exit.
+</pre><p>
+<br/>
+<br/>
+
+</p>
+<p>Parametrem SRC je vždy zdrojový soubor, který chci validovat
+(může být i „-“ pro načtení ze standardního vstupu). 
+</p>
+<p>Postup pro nalezení DTD, proti kterému budu validovat, je
+následující:</p>
+<ul>
+	<li><p>pokud jsem zadal konkrétní DTD přes volbu –dtd, pak mám
+	hotovo a můžu pokračovat s validací</p>
+	<li><p>dále se zkusím podívat, zda je v souboru <b>&lt;!DOCTYPE&gt;</b>
+	deklarace s uvedeným názvem DTD</p>
+	<li><p>v případě, že jsem neuspěl v žádném z předchozích
+	kroků, zjistím číslo verze z atributu <b>/dasta/@verze_ds</b>.
+	To pak použiji jako klíč pro hledání v tabulce <a href="http://ciselniky.dasta.mzcr.cz/CD_DS3/hypertext/WWBLJ.htm">Seznam
+	verzí DS3 a jim odpovídající verze NČLP a DTD</a>.</p>
+	<li><p>Pokud nenajdu odpovídající DTD v žádném z výše
+	uvedených kroků, pak končím s chybou</p>
+</ul>
+<p><span lang="cs-CZ">Dále potřebuji získat obsah vybraného DTD.
+Nejdříve jej zkusím najít jako lokální soubor v adresáři,
+který mohu zadat volbou –dtd-dir (implicitně je to aktuální
+adresář). V případě, že jej nenajdu lokálně, zkusím jej
+stáhnout z webových stránek standardu. Odkud budu stahovat, je
+možné ovlivnit volbou –dtd-url (implicitně to je
+<a href="http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/">http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/</a>).</span></p>
+<p><span lang="cs-CZ">T</span><span lang="cs-CZ">eď již mám vše,
+co potřebuji, takže můžu udělat konečnou validaci.</span></p>
+<p><br/>
+<br/>
+
+</p>
+<h2 class="western">A tady je několik příkladů použití</h2>
+<p><br/>
+<br/>
+
+</p>
+<p><span lang="cs-CZ">Soubor obsahuje deklaraci </span><span lang="cs-CZ">&lt;!DOCTYPE&gt;,
+</span><span lang="cs-CZ">DTD se stahuje z webových stránek:</span></p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds3_validate.py -v ~/tmp/tkkZ0166.xml
+document parsed
+validation against URL http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/ds032002.dtd
+document is valid
+</pre><p>
+<br/>
+<br/>
+
+</p>
+<p>V tomto případě není v souboru &lt;!DOCTYPE&gt; deklarace,
+jméno DTD se určuje podle čísla verze zprávy. DTD se stahuje z
+webových stránek:</p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds3_validate.py -vv ~/tmp/tkkZ0167.xml
+document parsed
+document version: 03.21.02, dtd file name: ds032002.dtd
+validation against URL http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/ds032002.dtd
+document is valid</pre><p>
+<br/>
+<br/>
+
+</p>
+<p>Validace proti konkrétnímu DTD bez ohledu na to, co je napsáno
+ve zprávě:</p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds3_validate.py -v --dtd ~/Downloads/ds031902.dtd ~/Downloads/tkkZ0166.xml
+document parsed
+validation against file /home/raska/Downloads/ds031902.dtd
+document is valid</pre><p>
+<br/>
+<br/>
+
+</p>
+<p>A validace se DTD staženými do lokálního adresáře:</p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds3_validate.py -v --dtd-dir ~/tmp ~/tmp/tlb10103.xml 
+document parsed
+validation against file /home/raska/tmp/ds032002.dtd
+document is valid
+</pre><p>
+<br/>
+<br/>
+
+</p>
+<h1 class="western">Validace DASTA ver.4 zpráv</h1>
+<p>Opět se nejdříve podívám na volby podporované skriptem:</p>
+<p><br/>
+<br/>
+
+</p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds4_validate.py -h
+Usage: ds4_validate.py [OPTIONS] SRC
+
+  Validates DASTA ver.4 document against appropriate XSDs.
+
+Options:
+  --xsd-dir TEXT  Local file system directory, where can be XSD found
+                  [default: ./xsd]
+
+  -v, --verbose   To be more verbose
+  -h, --help      Show this message and exit.
+</pre><p>
+<br/>
+<br/>
+
+</p>
+<p>Parametrem SRC je vždy zdrojový soubor, který chci validovat
+(může být i „-“ pro načtení ze standardního vstupu). 
+</p>
+<p>Volba –xsd-dir podporuje zadání adresáře, ve kterém mohou
+být stažena všechna potřebná schémata. Pak je skript nestahuje
+z webových stránek standardu, ale využije tyhle lokální kopie.</p>
+<p><br/>
+<br/>
+
+</p>
+<p>Postup pro výběr schémat, proti kterým budu validovat, je
+následující:</p>
+<ol>
+	<li><p>Nejdříve zkusím v kořenovém elementu najít atribut
+	<b>{http://www.w3.org/2001/XMLSchema-instance}schemaLocation</b>. V
+	případě, že jsem jej našel, dostal jsem seznam dvojic
+	<span style="font-weight: normal">(&lt;namespace&gt;, &lt;schema-url&gt;)</span>.</p>
+	<li><p>Pokud jsem tento atribut nenašel, pak se pokusím určit
+	schémata na základě použité verze DASTA dokumentu:</p>
+</ol>
+<ul>
+	<ul>
+		<li><p>Zjistím číslo verze z atributu <b>/dasta/@verze_ds</b>.</p>
+		<li><p><span lang="cs-CZ">T</span><span lang="cs-CZ">oto číslo
+		verze použiji jako klíč v tabulce </span><a href="http://ciselniky.dasta.mzcr.cz/CD_DS4/hypertext/WWBLK.htm"><span lang="cs-CZ">Seznam
+		verzí DS4 a jim odpovídající verze NČLP a XSD schémat</span></a>
+		k vyhledání všech schémat, které patří k této verzi.</p>
+		<li><p>Dále ovšem nastává trochu problém, protože ke schématu
+		potřebuji i jeho namespace. Proto musím všechna schémata načíst
+		a vytáhnout si z nich atribut <b>/schema/@targetNamespace</b>. Je
+		to sice zpomalení, ale pro jednorázové akce se to dá vydržet.</p>
+		<li><p>A již jsem se tedy dostal do stavu, kdy mám také <span lang="cs-CZ">seznam
+		dvojic (&lt;namespace&gt;, &lt;schema-url&gt;).</span></p>
+	</ul>
+</ul>
+<p><br/>
+<br/>
+
+</p>
+<p>Dále potřebuji pro validaci udělat jedno souhrnné schéma, do
+kterého budou všechna potřebná schémata naimportována. To je
+potřeba, pokud validátor podporuje validaci proti pouze jednomu
+schématu. Výsledek bude vidět v příkladech, takže tady tento
+krok nebudu dále rozebírat.</p>
+<p><span lang="cs-CZ">Jednotlivá schémata načítám buď z
+lokálního adresáře (to v případě volby –xsd-dir), nebo je
+stahuji z webových stránek standardu </span><span lang="cs-CZ"><a href="http://ciselniky.dasta.mzcr.cz/xmlschema/">ciselniky.dasta.mzcr.cz
+- /xmlschema/</a>.</span></p>
+<p><br/>
+<br/>
+
+</p>
+<p><span lang="cs-CZ">T</span><span lang="cs-CZ">eď již mám vše,
+co potřebuji, takže můžu udělat konečnou validaci.</span></p>
+<p><br/>
+<br/>
+
+</p>
+<h2 class="western">A tady je několik příkladů použití</h2>
+<p><br/>
+<br/>
+
+</p>
+<p>Základní varianta použití, kdy schémata jsou odkazována
+atributem schemaLocation (současně je vypsáno i souhrnné schéma):</p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds4_validate.py -vvv ~/tmp/ku_z_zakladni.xml
+document parsed
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_dasta, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_dasta-4.03.23.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_ip, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_ip-4.10.05.xsd
+&lt;schema xmlns=&quot;http://www.w3.org/2001/XMLSchema&quot; elementFormDefault=&quot;qualified&quot; version=&quot;1.0.0&quot;&gt;
+  &lt;import namespace=&quot;urn:cz-mzcr:ns:dasta:ds4:ds_dasta&quot; schemaLocation=&quot;http://ciselniky.dasta.mzcr.cz/xmlschema/ds_dasta-4.03.23.xsd&quot;/&gt;
+  &lt;import namespace=&quot;urn:cz-mzcr:ns:dasta:ds4:ds_ip&quot; schemaLocation=&quot;http://ciselniky.dasta.mzcr.cz/xmlschema/ds_ip-4.10.05.xsd&quot;/&gt;
+&lt;/schema&gt;
+document is valid
+</pre><p>
+<br/>
+<br/>
+
+</p>
+<p>Další varianta, kdy schémata nejsou odkazována explicitně a
+dohledávám je z údajů na webových stránkách standardu:</p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds4_validate.py -vv ~/tmp/ku_z_zakladni-2.xml 
+document parsed
+Dasta version number from document: 04.21.02
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_dasta, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_dasta-4.03.23.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_ip, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_ip-4.10.05.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu-4.10.01.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu_nkr, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu_nkr-4.02.07.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu_nrar, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu_nrar-4.01.17.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu_nrki, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu_nrki-4.01.17.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu_nrlud, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu_nrlud-4.01.11.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu_nrnar, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu_nrnar-4.02.13.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu_nrpot, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu_nrpot-4.01.15.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu_nrrod, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu_nrrod-4.01.16.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu_nrvv, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu_nrvv-4.01.15.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_idu_nor, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_idu_nor-4.01.08.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_ilb, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_ilb-4.01.24.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_ilc, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_ilc-4.01.24.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_ido, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_ido-4.02.22.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_type, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_type-4.02.14.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_cistype, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_cistype-4.01.07.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_cisidu, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_cisidu-4.03.05.xsd
+document is valid
+</pre><p>
+<br/>
+<br/>
+
+</p>
+<p>A to je vše. Třeba vám to k něčemu bude.</p>
+<pre class="western"></pre>
+</body>
+</html>
