@@ -48,9 +48,14 @@ def main(dtd_file, dtd_dir, dtd_url, src):
             verbose("cannot find out DTD file name, validations is not possible")
             sys.exit(-1)
 
-    res = dtd.validate(doc)
-    verbose("document is valid" if res else "document is not valid")
-    sys.exit(0 if res else -1)
+    try:
+        dtd.assertValid(doc)
+    except etree.DocumentInvalid as e:
+        verbose("document is not valid, error detail: '{0}'".format(e))
+        sys.exit(-1)
+    else:
+        verbose("document is valid")
+
 
 
 def dtd_file_name(doc):

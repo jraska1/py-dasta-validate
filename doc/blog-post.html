@@ -5,19 +5,19 @@
 	<title>Blog post on root.cz</title>
 	<meta name="generator" content="LibreOffice 7.0.4.2 (Linux)"/>
 	<meta name="created" content="2021-02-03T11:46:45.203152580"/>
-	<meta name="changed" content="2021-02-03T17:37:30.567309556"/>
+	<meta name="changed" content="2021-02-04T10:27:26.617778422"/>
 	<style type="text/css">
 		@page { size: 8.5in 11in; margin-left: 0.79in; margin-right: 0.39in; margin-top: 0.39in; margin-bottom: 0.39in }
-		p { margin-bottom: 0.1in; line-height: 115%; background: transparent }
-		h1 { margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		p { margin-bottom: 0.1in; background: transparent; line-height: 115%; background: transparent }
+		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
 		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
 		h1.cjk { font-family: "Noto Sans CJK SC"; font-size: 18pt; font-weight: bold }
 		h1.ctl { font-family: "Lohit Devanagari"; font-size: 18pt; font-weight: bold }
-		pre { background: transparent }
+		pre { background: transparent; background: transparent }
 		pre.western { font-family: "Liberation Mono", monospace; font-size: 10pt }
 		pre.cjk { font-family: "Noto Sans Mono CJK SC", monospace; font-size: 10pt }
 		pre.ctl { font-family: "Liberation Mono", monospace; font-size: 10pt }
-		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
 		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
 		h2.cjk { font-family: "Noto Sans CJK SC"; font-size: 16pt; font-weight: bold }
 		h2.ctl { font-family: "Lohit Devanagari"; font-size: 16pt; font-weight: bold }
@@ -54,16 +54,16 @@ původce zprávy.</p>
 </p>
 <p>Nezřídka narazím na to, že zpráva není validní. Pokud tuto
 skutečnost reklamuji u původce zprávy, pak častá reakce je něco
-ve smyslu: <i>„A jak jste pane Raška přišel na to, že je zpráva
+ve smyslu: „<i>A jak jste pane Raška přišel na to, že je zpráva
 nevalidní? Nám připadá validní dost.“</i></p>
 <p><br/>
 <br/>
 
 </p>
-<p><span lang="cs-CZ">Protože nechci pouze verbálně proklamovat,
+<p><span lang="cs-CZ">Protože nechci pouze proklamovat,
 nabízím své skripty, které jsem si postupem času vytvořil na
 zjednodušení validace DASTA zpráv. Najdete je v projektu na
-GitHub:  </span><a href="https://github.com/jraska1/py-dasta-validate"><span lang="cs-CZ">py-dasta-validate</span></a></p>
+GitHub: <a href="https://github.com/jraska1/py-dasta-validate">py-dasta-validate</a></span></p>
 <p><br/>
 <br/>
 
@@ -72,9 +72,9 @@ GitHub:  </span><a href="https://github.com/jraska1/py-dasta-validate"><span lan
 <p>Vzhledem k výrazně odlišnému způsobu definování struktury
 XML zpráv jsem vytvořil dva samostatné skripty, a to:</p>
 <ul>
-	<li><p><b>ds3_validate.py</b>	- skript pro validaci DASTA ver. 3 dle
+	<li><p><b>ds3_validate.py</b> - skript pro validaci DASTA ver. 3 dle
 	DTD</p>
-	<li><p><b>ds3_validate.py</b>	- skript pro validaci DASTA ver.4 dle
+	<li><p><b>ds3_validate.py</b> - skript pro validaci DASTA ver.4 dle
 	XML Schema</p>
 </ul>
 <p><br/>
@@ -114,8 +114,7 @@ Options:
                   http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/]
 
   -v, --verbose   To be more verbose
-  -h, --help      Show this message and exit.
-</pre><p>
+  -h, --help      Show this message and exit.</pre><p>
 <br/>
 <br/>
 
@@ -144,8 +143,8 @@ adresář). V případě, že jej nenajdu lokálně, zkusím jej
 stáhnout z webových stránek standardu. Odkud budu stahovat, je
 možné ovlivnit volbou –dtd-url (implicitně to je
 <a href="http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/">http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/</a>).</span></p>
-<p><span lang="cs-CZ">T</span><span lang="cs-CZ">eď již mám vše,
-co potřebuji, takže můžu udělat konečnou validaci.</span></p>
+<p><span lang="cs-CZ">Teď již mám vše, co potřebuji, takže můžu
+udělat konečnou validaci.</span></p>
 <p><br/>
 <br/>
 
@@ -155,13 +154,12 @@ co potřebuji, takže můžu udělat konečnou validaci.</span></p>
 <br/>
 
 </p>
-<p><span lang="cs-CZ">Soubor obsahuje deklaraci </span><span lang="cs-CZ">&lt;!DOCTYPE&gt;,
-</span><span lang="cs-CZ">DTD se stahuje z webových stránek:</span></p>
+<p><span lang="cs-CZ">Soubor obsahuje deklaraci &lt;!DOCTYPE&gt;, DTD
+se stahuje z webových stránek:</span></p>
 <pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds3_validate.py -v ~/tmp/tkkZ0166.xml
 document parsed
 validation against URL http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/ds032002.dtd
-document is valid
-</pre><p>
+document is valid</pre><p>
 <br/>
 <br/>
 
@@ -192,8 +190,16 @@ document is valid</pre><p>
 <pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds3_validate.py -v --dtd-dir ~/tmp ~/tmp/tlb10103.xml 
 document parsed
 validation against file /home/raska/tmp/ds032002.dtd
-document is valid
-</pre><p>
+document is valid</pre><p>
+<br/>
+<br/>
+
+</p>
+<p>Nakonec ještě zpráva s chybou:</p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds3_validate.py -v ~/tmp/tkkZ0168.xml 
+document parsed
+validation against URL http://ciselniky.dasta.mzcr.cz/CD_DS3/dtd/historie/ds032002.dtd
+document is not valid, error detail: 'Element pm content does not follow the DTD, expecting (as , a?), got (blaf as a ), line 15'</pre><p>
 <br/>
 <br/>
 
@@ -214,8 +220,7 @@ Options:
                   [default: ./xsd]
 
   -v, --verbose   To be more verbose
-  -h, --help      Show this message and exit.
-</pre><p>
+  -h, --help      Show this message and exit.</pre><p>
 <br/>
 <br/>
 
@@ -243,9 +248,9 @@ následující:</p>
 <ul>
 	<ul>
 		<li><p>Zjistím číslo verze z atributu <b>/dasta/@verze_ds</b>.</p>
-		<li><p><span lang="cs-CZ">T</span><span lang="cs-CZ">oto číslo
-		verze použiji jako klíč v tabulce </span><a href="http://ciselniky.dasta.mzcr.cz/CD_DS4/hypertext/WWBLK.htm"><span lang="cs-CZ">Seznam
-		verzí DS4 a jim odpovídající verze NČLP a XSD schémat</span></a>
+		<li><p><span lang="cs-CZ">Toto číslo verze použiji jako klíč v
+		tabulce <a href="http://ciselniky.dasta.mzcr.cz/CD_DS4/hypertext/WWBLK.htm">Seznam
+		verzí DS4 a jim odpovídající verze NČLP a XSD schémat</a></span>
 		k vyhledání všech schémat, které patří k této verzi.</p>
 		<li><p>Dále ovšem nastává trochu problém, protože ke schématu
 		potřebuji i jeho namespace. Proto musím všechna schémata načíst
@@ -266,14 +271,14 @@ schématu. Výsledek bude vidět v příkladech, takže tady tento
 krok nebudu dále rozebírat.</p>
 <p><span lang="cs-CZ">Jednotlivá schémata načítám buď z
 lokálního adresáře (to v případě volby –xsd-dir), nebo je
-stahuji z webových stránek standardu </span><span lang="cs-CZ"><a href="http://ciselniky.dasta.mzcr.cz/xmlschema/">ciselniky.dasta.mzcr.cz
+stahuji z webových stránek standardu <a href="http://ciselniky.dasta.mzcr.cz/xmlschema/">ciselniky.dasta.mzcr.cz
 - /xmlschema/</a>.</span></p>
 <p><br/>
 <br/>
 
 </p>
-<p><span lang="cs-CZ">T</span><span lang="cs-CZ">eď již mám vše,
-co potřebuji, takže můžu udělat konečnou validaci.</span></p>
+<p><span lang="cs-CZ">Teď již mám vše, co potřebuji, takže můžu
+udělat konečnou validaci.</span></p>
 <p><br/>
 <br/>
 
@@ -293,8 +298,7 @@ XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_ip, uri=http://ciselniky.das
   &lt;import namespace=&quot;urn:cz-mzcr:ns:dasta:ds4:ds_dasta&quot; schemaLocation=&quot;http://ciselniky.dasta.mzcr.cz/xmlschema/ds_dasta-4.03.23.xsd&quot;/&gt;
   &lt;import namespace=&quot;urn:cz-mzcr:ns:dasta:ds4:ds_ip&quot; schemaLocation=&quot;http://ciselniky.dasta.mzcr.cz/xmlschema/ds_ip-4.10.05.xsd&quot;/&gt;
 &lt;/schema&gt;
-document is valid
-</pre><p>
+document is valid</pre><p>
 <br/>
 <br/>
 
@@ -322,13 +326,22 @@ XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_ido, uri=http://ciselniky.da
 XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_type, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_type-4.02.14.xsd
 XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_cistype, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_cistype-4.01.07.xsd
 XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_cisidu, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_cisidu-4.03.05.xsd
-document is valid
+document is valid</pre><p>
+<br/>
+<br/>
+
+</p>
+<p>A na závěr zpráva s chybou:</p>
+<pre class="western">(.venv) [raska@localhost py-dasta-validate]$ python ds4_validate.py -vv ~/tmp/ku_z_zakladni-3.xml 
+document parsed
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_dasta, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_dasta-4.03.23.xsd
+XML schema involved: ns=urn:cz-mzcr:ns:dasta:ds4:ds_ip, uri=http://ciselniky.dasta.mzcr.cz/xmlschema/ds_ip-4.10.05.xsd
+document is not valid, error detail: 'Element '{urn:cz-mzcr:ns:dasta:ds4:ds_dasta}blaf': This element is not expected. Expected is ( {urn:cz-mzcr:ns:dasta:ds4:ds_dasta}as )., line 11'
 </pre><p>
 <br/>
 <br/>
 
 </p>
 <p>A to je vše. Třeba vám to k něčemu bude.</p>
-<pre class="western"></pre>
 </body>
 </html>
